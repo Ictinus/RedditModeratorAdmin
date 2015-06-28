@@ -1,9 +1,8 @@
 // ==UserScript==
 // @name		Reddit Moderator Admin
-// @version		1.15
+// @version		1.16
 // @namespace	http://ictinus.com/rma/
 // @description	Provides Reddit header tab with an interface to all you moderator links. 
-// @match http://*.reddit.com/*
 // @match https://*.reddit.com/*
 // ==/UserScript==
 
@@ -28,10 +27,11 @@
 // Updated: v1.14 28 February 2012, Update subscription counts of moderated reddits when visiting a reddit.
 
 // Updated: v1.15 28 June 2015, updated menu labels to current reddit values, removed css image references no longer needed.
+// Updated: v1.16 28 June 2015, updated xhr calls and css images to https. Reddit ModeratorAdmin will no longer work using http.
 
 var redditModAdmin = {
-	version : "1.15",
-	defaultJSON : '{"version": "1.15","moderated":{}, "fetched":false, "reqcount":0, "nextModFetch":"", "order":0, "debug": false}',
+	version : "1.16",
+	defaultJSON : '{"version": "1.16","moderated":{}, "fetched":false, "reqcount":0, "nextModFetch":"", "order":0, "debug": false}',
 	reqLimit : 20,
 	reqDelay : 2000, // the minimum millisecond delay requested by Reddit Admins
 	subDelay : 2000, // the minimum millisecond delay for subscription
@@ -565,7 +565,7 @@ var redditModAdmin = {
 				redditModAdmin.rma.reqcount++;
 				redditModAdmin.writeRMA();
 
-				var strURL = "http://www.reddit.com/reddits/mine/moderator.json";
+				var strURL = "https://www.reddit.com/reddits/mine/moderator.json";
 				strNextFetch = (redditModAdmin.rma.nextModFetch != "")
 						? "?after=" + redditModAdmin.rma.nextModFetch
 						: "";
@@ -733,9 +733,9 @@ if (document.body) {
 		div.rmaRow:hover a.reddit-view:hover {color: orangeRed;} \
 		div.rmaTopBorder { border-top: 1px solid grey; padding-top: 2px; margin-top: 5px; } \
 		div.icon-menu div { margin: 2px; height:1.5em;} \
-		a.zedit-stylesheet:before { background-image: url(http://www.reddit.com/static/sprite.png?v=0ec7f79c9f54824fdef1fe36aef6ad27); background-position: -4px -648px; \
+		a.zedit-stylesheet:before { background-image: url(https://www.reddit.com/static/sprite.png?v=0ec7f79c9f54824fdef1fe36aef6ad27); background-position: -4px -648px; \
  			float: left; content: " "; margin-right: 5px; display: block; width: 16px; height: 16px;} \
-		a.reddit-submit:before {background-image: url(http://www.reddit.com/static/sprite-reddit.VLn6vQIEOc8.png); background-position: -80px -672px; background-size: 500% 2600%; -moz-background-size: 23px; \
+		a.reddit-submit:before {background-image: url(https://www.reddit.com/static/sprite-reddit.VLn6vQIEOc8.png); background-position: -80px -672px; background-size: 500% 2600%; -moz-background-size: 23px; \
  			float: left; content: " "; margin-right: 5px; display: block; width: 16px; height: 16px;} \
 		div.rmaFooter div.rmaStatusBar { text-align:left; float:left; } \
 		div.rmaFooter div.rmaRefresh { text-align:right; float:right; margin: 2px 2px 0px 0px; } \
