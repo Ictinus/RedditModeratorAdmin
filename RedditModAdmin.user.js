@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name		Reddit Moderator Admin
-// @version		1.16
+// @version		1.17
 // @namespace	http://ictinus.com/rma/
 // @description	Provides Reddit header tab with an interface to all you moderator links. 
 // @match https://*.reddit.com/*
+// @match http://*.reddit.com/*
 // ==/UserScript==
 
 // Author: Ictinus
@@ -27,11 +28,12 @@
 // Updated: v1.14 28 February 2012, Update subscription counts of moderated reddits when visiting a reddit.
 
 // Updated: v1.15 28 June 2015, updated menu labels to current reddit values, removed css image references no longer needed.
-// Updated: v1.16 28 June 2015, updated xhr calls and css images to https. Reddit ModeratorAdmin will no longer work using http.
+// Updated: v1.16 28 June 2015, updated xhr calls and css images to https.
+// Updated: v1.17 29 June 2015, support both http and https. Reinstate check of currrent subreddit for moderator status and subscription count.
 
 var redditModAdmin = {
-	version : "1.16",
-	defaultJSON : '{"version": "1.16","moderated":{}, "fetched":false, "reqcount":0, "nextModFetch":"", "order":0, "debug": false}',
+	version : "1.17",
+	defaultJSON : '{"version": "1.17","moderated":{}, "fetched":false, "reqcount":0, "nextModFetch":"", "order":0, "debug": false}',
 	reqLimit : 20,
 	reqDelay : 2000, // the minimum millisecond delay requested by Reddit Admins
 	subDelay : 2000, // the minimum millisecond delay for subscription
@@ -565,7 +567,7 @@ var redditModAdmin = {
 				redditModAdmin.rma.reqcount++;
 				redditModAdmin.writeRMA();
 
-				var strURL = "https://www.reddit.com/reddits/mine/moderator.json";
+				var strURL = redditModAdmin.protocol + "://www.reddit.com/reddits/mine/moderator.json";
 				strNextFetch = (redditModAdmin.rma.nextModFetch != "")
 						? "?after=" + redditModAdmin.rma.nextModFetch
 						: "";
@@ -640,12 +642,12 @@ var redditModAdmin = {
 		} catch (err) {};
 	},
 	getCurrentRedditInfo : function() {
-//		var theTitle = document.getElementsByClassName('titlebox')[0];
-//		var theSubs = theTitle.getElementsByClassName('number')[0].innerHTML.replace(",","");
-//		if (redditModAdmin.rma.moderated[reddit.cur_site]) {
-//			redditModAdmin.rma.moderated[reddit.cur_site] = {"title": theTitle, "subs": theSubs};
-//		}
-//		redditModAdmin.writeRMA();
+        var theTitle = document.querySelector('.redditname');
+        var theSubs = document.querySelector('.subscribers > .number');        
+		if (redditModAdmin.rma.moderated[reddit.cur_site]) {
+			redditModAdmin.rma.moderated[reddit.cur_site] = {"title": theTitle, "subs": theSubs};
+		}
+		redditModAdmin.writeRMA();
 	},	
 	firstTimeFetch: function () {
 		var bDebug = redditModAdmin.rma.debug;
@@ -661,6 +663,7 @@ var redditModAdmin = {
 	init : function() {
 		// first tests. Parse a page to determine if we are looking at a
 		// sub-reddit and capture its id/name/subscription
+        redditModAdmin.protocol = (/^https:\/\//.test(location.href)) ? "https":"http";
 		redditModAdmin.readRMA();
 		redditModAdmin.createUITab();
 
@@ -733,9 +736,7 @@ if (document.body) {
 		div.rmaRow:hover a.reddit-view:hover {color: orangeRed;} \
 		div.rmaTopBorder { border-top: 1px solid grey; padding-top: 2px; margin-top: 5px; } \
 		div.icon-menu div { margin: 2px; height:1.5em;} \
-		a.zedit-stylesheet:before { background-image: url(https://www.reddit.com/static/sprite.png?v=0ec7f79c9f54824fdef1fe36aef6ad27); background-position: -4px -648px; \
- 			float: left; content: " "; margin-right: 5px; display: block; width: 16px; height: 16px;} \
-		a.reddit-submit:before {background-image: url(https://www.reddit.com/static/sprite-reddit.VLn6vQIEOc8.png); background-position: -80px -672px; background-size: 500% 2600%; -moz-background-size: 23px; \
+		a.reddit-submit:before {background-image: url(/static/sprite-reddit.VLn6vQIEOc8.png); background-position: -80px -672px; background-size: 500% 2600%; -moz-background-size: 23px; \
  			float: left; content: " "; margin-right: 5px; display: block; width: 16px; height: 16px;} \
 		div.rmaFooter div.rmaStatusBar { text-align:left; float:left; } \
 		div.rmaFooter div.rmaRefresh { text-align:right; float:right; margin: 2px 2px 0px 0px; } \
