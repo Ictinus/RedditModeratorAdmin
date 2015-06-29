@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name		Reddit Moderator Admin
-// @version		1.17
+// @version		1.18
 // @namespace	http://ictinus.com/rma/
 // @description	Provides Reddit header tab with an interface to all you moderator links. 
 // @match https://*.reddit.com/*
@@ -30,10 +30,11 @@
 // Updated: v1.15 28 June 2015, updated menu labels to current reddit values, removed css image references no longer needed.
 // Updated: v1.16 28 June 2015, updated xhr calls and css images to https.
 // Updated: v1.17 29 June 2015, support both http and https. Reinstate check of currrent subreddit for moderator status and subscription count.
+// Updated: v1.18 29 June 2015, fix broken storage format from previous version.
 
 var redditModAdmin = {
-	version : "1.17",
-	defaultJSON : '{"version": "1.17","moderated":{}, "fetched":false, "reqcount":0, "nextModFetch":"", "order":0, "debug": false}',
+	version : "1.18",
+	defaultJSON : '{"version": "1.18","moderated":{}, "fetched":false, "reqcount":0, "nextModFetch":"", "order":0, "debug": false}',
 	reqLimit : 20,
 	reqDelay : 2000, // the minimum millisecond delay requested by Reddit Admins
 	subDelay : 2000, // the minimum millisecond delay for subscription
@@ -642,10 +643,11 @@ var redditModAdmin = {
 		} catch (err) {};
 	},
 	getCurrentRedditInfo : function() {
-        var theTitle = document.querySelector('.redditname');
-        var theSubs = document.querySelector('.subscribers > .number');        
-		if (redditModAdmin.rma.moderated[reddit.cur_site]) {
-			redditModAdmin.rma.moderated[reddit.cur_site] = {"title": theTitle, "subs": theSubs};
+        var theTitle = document.querySelector('.titlebox > .redditname');
+        var theSubs = document.querySelector('.subscribers > .number');
+        var isModerator = !!document.querySelector('body.moderator');
+        if (isModerator && !!theTitle && !!theSubs) {
+            redditModAdmin.rma.moderated[reddit.cur_site] = {"label": theTitle.textContent, "subs": parseInt(theSubs.textContent, 10)};
 		}
 		redditModAdmin.writeRMA();
 	},	
