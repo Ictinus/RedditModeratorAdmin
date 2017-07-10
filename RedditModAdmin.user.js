@@ -649,10 +649,12 @@ var redditModAdmin = {
         var theTitle = document.querySelector('.titlebox > .redditname');
         var theSubs = document.querySelector('.subscribers > .number');
         var isModerator = !!document.querySelector('body.moderator');
-        if (isModerator && !!theTitle && !!theSubs) {
-            redditModAdmin.rma.moderated[r.config.cur_site] = {"label": theTitle.textContent, "subs": parseInt(theSubs.textContent, 10)};
+		var thingId = document.querySelector('input[name="thing_id"]')
+		var redditId = (!!thingId) ? thingId.value : null;
+        if (isModerator && !!theTitle && !!theSubs && !!redditId) {
+            redditModAdmin.rma.moderated[redditId] = {"label": theTitle.textContent, "subs": parseInt(theSubs.textContent, 10)};
+			redditModAdmin.writeRMA();
 		}
-		redditModAdmin.writeRMA();
 	},	
 	firstTimeFetch: function () {
 		var bDebug = redditModAdmin.rma.debug;
