@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name		Reddit Moderator Admin
-// @version		1.18
+// @version		1.19
 // @namespace	http://ictinus.com/rma/
 // @description	Provides Reddit header tab with an interface to all you moderator links. 
 // @match https://*.reddit.com/*
