@@ -502,7 +502,7 @@ var redditModAdmin = {
 			theRow.addEventListener('click', function(e) {
 					if (e.target.className != 'reddit-view') {
 						e.stopPropagation();
-						redditModAdmin.displayActions(e.target);
+						redditModAdmin.displayActions(e.currentTarget);
 					}
 				}, false);
 			// col2 / labels
