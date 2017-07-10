@@ -650,7 +650,7 @@ var redditModAdmin = {
         var theSubs = document.querySelector('.subscribers > .number');
         var isModerator = !!document.querySelector('body.moderator');
         if (isModerator && !!theTitle && !!theSubs) {
-            redditModAdmin.rma.moderated[reddit.cur_site] = {"label": theTitle.textContent, "subs": parseInt(theSubs.textContent, 10)};
+            redditModAdmin.rma.moderated[r.config.cur_site] = {"label": theTitle.textContent, "subs": parseInt(theSubs.textContent, 10)};
 		}
 		redditModAdmin.writeRMA();
 	},	
