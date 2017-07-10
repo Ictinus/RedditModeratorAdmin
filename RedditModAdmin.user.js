@@ -31,7 +31,7 @@
 // Updated: v1.16 28 June 2015, updated xhr calls and css images to https.
 // Updated: v1.17 29 June 2015, support both http and https. Reinstate check of currrent subreddit for moderator status and subscription count.
 // Updated: v1.18 29 June 2015, fix broken storage format from previous version.
-// Updated: v1.19 10 July 2017, fix event target styling (admin box not appearing in Firefox 54)
+// Updated: v1.19 10 July 2017, fix event target referencing (admin box not appearing in Firefox 54)
 
 var redditModAdmin = {
 	version : "1.19",
@@ -502,7 +502,7 @@ var redditModAdmin = {
 			theRow.addEventListener('click', function(e) {
 					if (e.target.className != 'reddit-view') {
 						e.stopPropagation();
-						redditModAdmin.displayActions(this);
+						redditModAdmin.displayActions(e.target);
 					}
 				}, false);
 			// col2 / labels
