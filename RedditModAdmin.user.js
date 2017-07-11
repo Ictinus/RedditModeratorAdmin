@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name		Reddit Moderator Admin
-// @version		1.18
+// @version		1.19
 // @namespace	http://ictinus.com/rma/
 // @description	Provides Reddit header tab with an interface to all you moderator links. 
 // @match https://*.reddit.com/*
@@ -31,10 +31,11 @@
 // Updated: v1.16 28 June 2015, updated xhr calls and css images to https.
 // Updated: v1.17 29 June 2015, support both http and https. Reinstate check of currrent subreddit for moderator status and subscription count.
 // Updated: v1.18 29 June 2015, fix broken storage format from previous version.
+// Updated: v1.19 10 July 2017, fix event target referencing (admin box not appearing in Firefox 54)
 
 var redditModAdmin = {
-	version : "1.18",
-	defaultJSON : '{"version": "1.18","moderated":{}, "fetched":false, "reqcount":0, "nextModFetch":"", "order":0, "debug": false}',
+	version : "1.19",
+	defaultJSON : '{"version": "1.19","moderated":{}, "fetched":false, "reqcount":0, "nextModFetch":"", "order":0, "debug": false}',
 	reqLimit : 20,
 	reqDelay : 2000, // the minimum millisecond delay requested by Reddit Admins
 	subDelay : 2000, // the minimum millisecond delay for subscription
@@ -80,7 +81,8 @@ var redditModAdmin = {
 		theLink.href = "#";
 		theLink.innerHTML = "admin box";
 		theLink.addEventListener('click', function (e) {
-			e.stopPropagation();	
+			e.stopPropagation();
+			var theTabTarget = e.target;
 			var theUI = document.getElementById('rmaUI');
 			if (theUI.style.display === 'block') {
 				theUI.style.display = 'none';
@@ -88,8 +90,8 @@ var redditModAdmin = {
 				redditModAdmin.closeUIs();
 				theUI.style.visibility = 'hidden';
 				theUI.style.display = 'block';
-				theUI.style.top = parseInt(this.offsetTop + this.offsetHeight + 2) + 'px';
-				var iOffsetLeft = parseInt(this.offsetLeft) + parseInt(this.offsetWidth) - parseInt(parseInt(theUI.offsetWidth)*0.75); 
+				theUI.style.top = parseInt(theTabTarget.offsetTop + theTabTarget.offsetHeight + 2) + 'px';
+				var iOffsetLeft = parseInt(theTabTarget.offsetLeft) + parseInt(theTabTarget.offsetWidth) - parseInt(parseInt(theUI.offsetWidth)*0.75); 
 				if (iOffsetLeft < 0) { 
 					theUI.style.left = 2 + 'px';
 				} else {
@@ -98,6 +100,7 @@ var redditModAdmin = {
 				theUI.style.visibility = '';
 			} 
 		}, false);
+
 		
 		uiTab.appendChild(theLink);
 		tabmenu.appendChild(uiTab);	
@@ -499,7 +502,7 @@ var redditModAdmin = {
 			theRow.addEventListener('click', function(e) {
 					if (e.target.className != 'reddit-view') {
 						e.stopPropagation();
-						redditModAdmin.displayActions(this);
+						redditModAdmin.displayActions(e.currentTarget);
 					}
 				}, false);
 			// col2 / labels
@@ -646,10 +649,12 @@ var redditModAdmin = {
         var theTitle = document.querySelector('.titlebox > .redditname');
         var theSubs = document.querySelector('.subscribers > .number');
         var isModerator = !!document.querySelector('body.moderator');
-        if (isModerator && !!theTitle && !!theSubs) {
-            redditModAdmin.rma.moderated[reddit.cur_site] = {"label": theTitle.textContent, "subs": parseInt(theSubs.textContent, 10)};
+		var thingId = document.querySelector('input[name="thing_id"]')
+		var redditId = (!!thingId) ? thingId.value : null;
+        if (isModerator && !!theTitle && !!theSubs && !!redditId) {
+            redditModAdmin.rma.moderated[redditId] = {"label": theTitle.textContent, "subs": parseInt(theSubs.textContent, 10)};
+			redditModAdmin.writeRMA();
 		}
-		redditModAdmin.writeRMA();
 	},	
 	firstTimeFetch: function () {
 		var bDebug = redditModAdmin.rma.debug;
